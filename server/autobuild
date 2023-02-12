@@ -287,6 +287,30 @@ os_fedora() {
     return 0
 }
 
+# Nobara - derivative of Fedora 
+os_nobara() {
+    if ! [ -e "/etc/nobara-release" ]; then
+        return 1
+    fi
+    PKGCMD=dnf
+    PKGARGS=install
+    PACKAGES="autoconf
+              automake
+              gcc
+              libpng-devel
+              make
+              poppler-devel
+              poppler-glib-devel
+              zlib-devel"
+    VERSION=$(source_var /etc/os-release VERSION_ID)
+    if [ -n "$VERSION" ] && [ "$VERSION" -ge 26 ]; then
+        PACKAGES="$PACKAGES pkgconf"
+    else
+        PACKAGES="$PACKAGES pkgconfig"
+    fi
+    return 0
+}
+
 # Debian/Ubuntu
 os_debian() {
     if ! [ -e "/etc/debian_version" ]; then
@@ -500,6 +524,7 @@ os_argument() {
         netbsd)  os_netbsd  "$@";;
         openbsd) os_openbsd "$@";;
         fedora)  os_fedora  "$@";;
+        nobara)  os_nobara  "$@";;
         debian)  os_debian  "$@";;
         gentoo)  os_gentoo  "$@";;
         msys2)   os_msys2   "$@";;
@@ -530,6 +555,7 @@ os_centos   "$@" || \
 os_netbsd   "$@" || \
 os_openbsd  "$@" || \
 os_fedora   "$@" || \
+os_nobara   "$@" || \
 os_debian   "$@" || \
 os_gentoo   "$@" || \
 os_msys2    "$@" || \
